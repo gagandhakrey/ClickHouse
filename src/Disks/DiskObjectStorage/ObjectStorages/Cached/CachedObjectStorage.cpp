@@ -176,11 +176,9 @@ void CachedObjectStorage::copyObjectToAnotherObjectStorage( // NOLINT
     IObjectStorage & object_storage_to,
     std::optional<ObjectAttributes> object_to_attributes)
 {
-    /// Unwrap cache layers from the destination, otherwise the underlying storage cannot
-    /// recognize the destination as same-type and use a server-side copy (e.g. S3 `CopyObject`),
-    /// and would stream the object through this server instead. The unwrapped layers do not
-    /// observe the write, so the destination key must be dropped from their caches here,
-    /// the same way writeObject does.
+    /// Unwrap cache layers, otherwise the underlying storage cannot recognize a same-type
+    /// destination and use a server-side copy. The unwrapped caches do not observe the
+    /// write, so drop the destination key from them.
     IObjectStorage * destination = &object_storage_to;
     while (auto underlying = destination->getUnderlying())
     {
